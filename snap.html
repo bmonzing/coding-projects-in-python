@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Snap Game</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+</head>
+<body>
+
+<py-script>
+import random
+from js import document, setTimeout
+
+# Create a list to store the shapes
+shapes = []
+circle = c.create_oval(35, 20, 365, 350, outline='black', fill='black', state=HIDDEN)
+shapes.append(circle)
+circle = c.create_oval(35, 20, 365, 350, outline='red', fill='red', state=HIDDEN)
+shapes.append(circle)
+circle = c.create_oval(35, 20, 365, 350, outline='green', fill='green', state=HIDDEN)
+shapes.append(circle)
+circle = c.create_oval(35, 20, 365, 350, outline='blue', fill='blue', state=HIDDEN)
+shapes.append(circle)
+
+rectangle = c.create_rectangle(35, 100, 365, 370, outline='black', fill='black', state=HIDDEN)
+shapes.append(rectangle)
+rectangle = c.create_rectangle(35, 100, 365, 370, outline='red', fill='red', state=HIDDEN)
+shapes.append(rectangle)
+rectangle = c.create_rectangle(35, 100, 365, 370, outline='green', fill='green', state=HIDDEN)
+shapes.append(rectangle)
+rectangle = c.create_rectangle(35, 100, 365, 370, outline='blue', fill='blue', state=HIDDEN)
+shapes.append(rectangle)
+
+square = c.create_rectangle(35, 20, 365, 350, outline='black', fill='black', state=HIDDEN)
+shapes.append(square)
+square = c.create_rectangle(35, 20, 365, 350, outline='red', fill='red', state=HIDDEN)
+shapes.append(square)
+square = c.create_rectangle(35, 20, 365, 350, outline='green', fill='green', state=HIDDEN)
+shapes.append(square)
+square = c.create_rectangle(35, 20, 365, 350, outline='blue', fill='blue', state=HIDDEN)
+shapes.append(square)
+c.pack()
+
+random.shuffle(shapes)
+
+# Initial game state
+shape = None
+current_color = ''
+previous_color = ''
+player1_score = 0
+player2_score = 0
+
+# Function to change the current shape
+def next_shape():
+    global current_color, previous_color, shapes
+    if shapes:
+        previous_color = current_color
+        current_color = shapes.pop()
+        # Update the display with the new shape
+        display_shape(current_color)
+        # Schedule the next shape change
+        setTimeout(next_shape, 1000)
+    else:
+        # Game over, determine the winner
+        determine_winner()
+
+# Function to display the current shape
+def display_shape(color):
+    shape_display = document.getElementById('shapeDisplay')
+    shape_display.style.backgroundColor = color
+    shape_display.textContent = color.upper()
+
+# Function to determine the winner
+def determine_winner():
+    result_display = document.getElementById('resultDisplay')
+    if player1_score > player2_score:
+        result_display.textContent = 'Winner: Player 1'
+    elif player2_score > player1_score:
+        result_display.textContent = 'Winner: Player 2'
+    else:
+        result_display.textContent = 'It is a tie!'
+
+# Function to handle the snap action
+def snap(event):
+    global player1_score, player2_score
+    if previous_color == current_color:
+        if event.key == 'q':
+            player1_score += 1
+        elif event.key == 'p':
+            player2_score += 1
+    else:
+        if event.key == 'q':
+            player1_score -= 1
+        elif event.key == 'p':
+            player2_score -= 1
+
+# Bind the snap function to keypress events
+document.addEventListener('keypress', snap)
+
+# Start the game after a delay
+setTimeout(next_shape, 3000)
+</py-script>
+
+<div id="shapeDisplay" style="width: 200px; height: 200px; border: 1px solid black;"></div>
+<div id="resultDisplay"></div>
+
+</body>
+</html>
